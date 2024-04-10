@@ -11,18 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
 
-    steps:
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v2'
-        with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
-
-      - name: 'Use gcloud CLI'
-        run: 'gcloud info'
-
   test:
     needs: job_id
     runs-on: ubuntu-latest
