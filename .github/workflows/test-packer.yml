@@ -1,0 +1,221 @@
+name: test-packer
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  job_id:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+
+    steps:
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Use gcloud CLI'
+        run: 'gcloud info'
+
+  test:
+    needs: job_id
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: Setup PostgreSQL Server
+        uses: ikalnytskyi/action-setup-postgres@v4
+        with:
+          username: postgres
+          password: admin
+          database: cloud1
+          port: 5432
+        id: postgres
+      - name: Build with Maven
+        run: mvn compile
+
+      - name: Test with Maven
+        run: mvn test
+
+  validate:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Use gcloud CLI'
+        run: 'gcloud info'
+
+      - uses: actions/checkout@v3
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        id: setup
+
+      - name: Run `packer init`
+        id: init
+        run: "packer init packer-info.pkr.hcl"
+
+      - name: Run `packer fmt`
+        id: fmt
+        run: "packer fmt -check packer-info.pkr.hcl"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Package with Maven
+        run: mvn package -Dmaven.test.skip
+
+      - name: Create test deployment folder
+        run: |
+          mkdir -p CloudAppRelease &&
+          cp ./target/assingment-0.0.1-SNAPSHOT.jar CloudAppRelease/assingment-0.0.1-SNAPSHOT.jar &&
+          cp ./start.sh CloudAppRelease/start.sh &&
+          cp ./webapp.service CloudAppRelease/webapp.service &&
+          cp ./env_vars.sh CloudAppRelease/env_vars.sh
+      - name: Create zip of test deployment folder
+        uses: montudor/action-zip@v1
+        with:
+          args: zip -qq -r webapp.zip CloudAppRelease
+
+      - name: Validate Packer Image
+        run: packer validate packer-info.pkr.hcl
+
+      - name: Build Packer Image
+        run: packer build -force packer-info.pkr.hcl
+
+      - name: Create instance template
+        run: |
+          gcloud compute instance-templates create webapp-instance-${{ github.sha }} \
+            --machine-type=n1-standard-1 \
+            --instance-template-region=${{ secrets.REGION }} \
+            --region=${{ secrets.REGION }} \
+            --tags=webapp,sql \
+            --image=projects/${{ secrets.GCP_PROJECT_ID }}/global/images/${{ secrets.IMAGE_NAME }} \
+            --boot-disk-size=100 \
+            --boot-disk-type=pd-ssd \
+            --boot-disk-device-name=terraform-instance \
+            --network=demo-vpc-network-02 \
+            --subnet=webapp \
+            --service-account=csye6225-account-id-13@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
+            --scopes=https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/pubsub,https://www.googleapis.com/auth/cloudkms \
+            --no-boot-disk-auto-delete \
+            --boot-disk-kms-key=projects/cloud-project-04/locations/us-east1/keyRings/${{ secrets.KEY_RING }}/cryptoKeys/vm-disk-key \
+            --metadata startup-script='#!/bin/bash
+              cat <<EOT
+              touch /opt/application.properties
+              echo "spring.datasource.driver-class-name=org.postgresql.Driver" >> /opt/application.properties
+              echo "spring.datasource.url=jdbc:postgresql://${{ secrets.PG_HOSTNAME }}:5432/${{ secrets.DB_NAME }}" >> /opt/application.properties
+              echo "spring.datasource.username=${{ secrets.DB_USER }}" >> /opt/application.properties
+              echo "spring.datasource.password=${{ secrets.PG_DB_PASSWORD }}" >> /opt/application.properties
+              echo "spring.jpa.properties.hibernate.show_sql=true" >> /opt/application.properties
+              echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> /opt/application.properties
+              echo "spring.jpa.hibernate.ddl-auto=update" >> /opt/application.properties
+              echo "spring.devtools.restart.enabled=false" >> /opt/application.properties
+              echo "spring.datasource.hikari.connectionTimeout=10000" >> /opt/application.properties
+              echo "spring.datasource.hikari.maximumPoolSize=10" >> /opt/application.properties
+              echo "spring.jpa.properties.hibernate.format_sql=true" >> /opt/application.properties
+              echo "spring.jpa.show-sql=true" >> /opt/application.properties
+              echo "pubsub.projectId=${{ secrets.GCP_PROJECT_ID }}" >> /opt/application.properties
+              echo "pubsub.topicId=verify_email" >> /opt/application.properties
+              EOT
+              chmod 655 /opt/application.properties
+              chown csye6225:csye6225 /opt/application.properties
+              sudo systemctl start webapp
+              sudo systemctl start google-cloud-ops-agent' \
+            --verbosity=debug
+
+
+      #      - name: Create instance template
+      #        run: |
+      #
+      #          POSTGRES_HOST_GCP=$(gcloud secrets versions access latest --secret='${{ secrets.POSTGRES_HOST_GCP }}')
+      #          POSTGRES_PASSWORD_GCP=$(gcloud secrets versions access latest --secret='${{ secrets.POSTGRES_PASSWORD_SECRET }}')
+      #          VM_DISK_KEY_GCP=$(gcloud secrets versions access latest --secret='${{ secrets.VM_DISK_KEY_GCP }}')
+      #
+      #          gcloud compute instance-templates create webapp-instance-${{ github.sha }} \
+      #            --machine-type=n1-standard-1 \
+      #            --instance-template-region=${{ secrets.REGION }} \
+      #            --region=${{ secrets.REGION }} \
+      #            --tags=webapp,sql \
+      #            --image=projects/${{ secrets.GCP_PROJECT_ID }}/global/images/${{ secrets.IMAGE_NAME }} \
+      #            --boot-disk-size=100 \
+      #            --boot-disk-type=pd-ssd \
+      #            --boot-disk-device-name=terraform-instance \
+      #            --network=demo-vpc-network-02 \
+      #            --subnet=webapp \
+      #            --service-account=csye6225-account-id-13@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
+      #            --scopes=https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/pubsub,https://www.googleapis.com/auth/cloudkms \
+      #            --no-boot-disk-auto-delete \
+      #            --boot-disk-kms-key=projects/cloud-project-04/locations/us-east1/keyRings/key-ring123/cryptoKeys/vpc2-vm-crypto-key \
+      #            --metadata startup-script='#!/bin/bash
+      #             cat <<EOT
+      #             touch /opt/application.properties
+      #             echo "spring.datasource.driver-class-name=org.postgresql.Driver" >> /opt/application.properties
+      #             echo "spring.datasource.url=jdbc:postgresql://$POSTGRES_HOST_GCP:5432/${{ secrets.DB_NAME }}" >> /opt/application.properties
+      #             echo "spring.datasource.username=${{ secrets.DB_USER }}" >> /opt/application.properties
+      #             echo "spring.datasource.password=$POSTGRES_PASSWORD_GCP" >> /opt/application.properties
+      #             echo "spring.jpa.properties.hibernate.show_sql=true" >> /opt/application.properties
+      #             echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> /opt/application.properties
+      #             echo "spring.jpa.hibernate.ddl-auto=update" >> /opt/application.properties
+      #             echo "spring.devtools.restart.enabled=false" >> /opt/application.properties
+      #             echo "spring.datasource.hikari.connectionTimeout=10000" >> /opt/application.properties
+      #             echo "spring.datasource.hikari.maximumPoolSize=10" >> /opt/application.properties
+      #             echo "spring.jpa.properties.hibernate.format_sql=true" >> /opt/application.properties
+      #             echo "spring.jpa.show-sql=true" >> /opt/application.properties
+      #             echo "pubsub.projectId=${var.project_id}" >> /opt/application.properties
+      #             echo "pubsub.topicId=${google_pubsub_topic.pub_sub_topic.name}" >> /opt/application.properties
+      #             EOT
+      #           # Set permissions
+      #            chmod 655 /opt/application.properties
+      #            chown csye6225:csye6225 /opt/application.properties
+      #
+      #           # Run the application service
+      #            sudo systemctl start webapp
+      #            sudo systemctl start google-cloud-ops-agent' \
+      #            --verbosity=debug
+
+
+
+      # - Update the Instance Group with the new Instance Template
+      # - name: Update Instance Group
+      - name: Update Instance Group
+        run: |
+          gcloud compute instance-groups managed set-instance-template instance-group-manager \
+            --project=${{ secrets.GCP_PROJECT_ID }} \
+            --region=${{ secrets.REGION }} \
+            --template=projects/${{ secrets.GCP_PROJECT_ID }}/regions/${{ secrets.REGION }}/instanceTemplates/webapp-instance-${{ github.sha }}
+
+      - name: Update instances inside instance group manager
+        run: |
+          gcloud compute instance-groups managed rolling-action start-update instance-group-manager \
+              --version=template=projects/${{ secrets.GCP_PROJECT_ID }}/regions/${{ secrets.REGION }}/instanceTemplates/webapp-instance-${{ github.sha }} \
+              --region=${{ secrets.REGION }} \
+              --quiet
+
+      - name: Wait for instances to be updated and running
+        run: |
+          gcloud config set project ${{secrets.GCP_PROJECT_ID}}
+          gcloud compute instance-groups managed wait-until instance-group-manager \
+              --region=${{ secrets.REGION }} \
+              --stable
