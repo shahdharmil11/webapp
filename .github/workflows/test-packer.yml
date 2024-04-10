@@ -18,7 +18,7 @@ jobs:
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
 
-      - name: 'Use gcloud CLI'
+      - name: 'Use Gcloud CLI'
         run: 'gcloud info'
 
   test:
