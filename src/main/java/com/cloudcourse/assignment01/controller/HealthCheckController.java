@@ -29,7 +29,7 @@ public class HealthCheckController {
             ThreadContext.put("httpMethod", request.getMethod());
             ThreadContext.put("path", request.getRequestURI());
             ThreadContext.put("logger","Inside new healthcheck get method");
-            logger.info("Inside new healthcheck get method");
+            logger.info("Inside demo healthcheck get method");
 
             if (payload != null || !params.isEmpty()) {
                 // If payload is present, returning HTTP 400 Bad Request
