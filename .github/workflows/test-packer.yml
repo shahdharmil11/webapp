@@ -94,6 +94,7 @@ jobs:
 
       - name: Create instance template
         run: |
+          gcloud auth login
           gcloud compute instance-templates create webapp-instance-${{ github.sha }} \
             --machine-type=n1-standard-1 \
             --instance-template-region=${{ secrets.REGION }} \
