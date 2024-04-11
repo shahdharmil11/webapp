@@ -92,6 +92,9 @@ jobs:
       - name: Validate Packer Image
         run: packer validate packer-info.pkr.hcl
 
+      - name: Build Packer Image
+        run: packer build -force packer-info.pkr.hcl
+
       - name: 'Authenticate with Google Cloud'
         uses: 'google-github-actions/auth@v2'
         with:
@@ -134,26 +137,6 @@ jobs:
               echo 'pubsub.projectId=${{ secrets.GCP_PROJECT_ID }}' >> /opt/application.properties
               echo 'pubsub.topicId=verify_email' >> /opt/application.properties" \
               --verbosity=debug
-          
-
-#            --metadata startup-script='#!/bin/bash
-#              cat <<EOT
-#              touch /opt/application.properties
-#              echo "spring.datasource.driver-class-name=org.postgresql.Driver" >> /opt/application.properties
-#              echo "spring.datasource.url=jdbc:postgresql://${{ secrets.PG_HOSTNAME }}:5432/${{ secrets.DB_NAME }}" >> /opt/application.properties
-#              echo "spring.datasource.username=${{ secrets.DB_USER }}" >> /opt/application.properties
-#              echo "spring.datasource.password=${{ secrets.PG_DB_PASSWORD }}" >> /opt/application.properties
-#              echo "spring.jpa.properties.hibernate.show_sql=true" >> /opt/application.properties
-#              echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> /opt/application.properties
-#              echo "spring.jpa.hibernate.ddl-auto=update" >> /opt/application.properties
-#              echo "spring.devtools.restart.enabled=false" >> /opt/application.properties
-#              echo "spring.datasource.hikari.connectionTimeout=10000" >> /opt/application.properties
-#              echo "spring.datasource.hikari.maximumPoolSize=10" >> /opt/application.properties
-#              echo "spring.jpa.properties.hibernate.format_sql=true" >> /opt/application.properties
-#              echo "spring.jpa.show-sql=true" >> /opt/application.properties
-#              echo "pubsub.projectId=${{ secrets.GCP_PROJECT_ID }}" >> /opt/application.properties
-#              echo "pubsub.topicId=verify_email" >> /opt/application.properties
-#              EOT
 
       # - name:  Update Instance Group
       - name: Update Instance Group
