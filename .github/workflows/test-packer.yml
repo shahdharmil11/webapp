@@ -117,29 +117,40 @@ jobs:
             --scopes=https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/pubsub,https://www.googleapis.com/auth/cloudkms \
             --no-boot-disk-auto-delete \
             --boot-disk-kms-key=projects/cloud-project-04/locations/us-east1/keyRings/${{ secrets.KEY_RING }}/cryptoKeys/vm-disk-key \
-            --metadata startup-script='#!/bin/bash
-              cat <<EOT
-              touch /opt/application.properties
-              echo "spring.datasource.driver-class-name=org.postgresql.Driver" >> /opt/application.properties
-              echo "spring.datasource.url=jdbc:postgresql://${{ secrets.PG_HOSTNAME }}:5432/${{ secrets.DB_NAME }}" >> /opt/application.properties
-              echo "spring.datasource.username=${{ secrets.DB_USER }}" >> /opt/application.properties
-              echo "spring.datasource.password=${{ secrets.PG_DB_PASSWORD }}" >> /opt/application.properties
-              echo "spring.jpa.properties.hibernate.show_sql=true" >> /opt/application.properties
-              echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> /opt/application.properties
-              echo "spring.jpa.hibernate.ddl-auto=update" >> /opt/application.properties
-              echo "spring.devtools.restart.enabled=false" >> /opt/application.properties
-              echo "spring.datasource.hikari.connectionTimeout=10000" >> /opt/application.properties
-              echo "spring.datasource.hikari.maximumPoolSize=10" >> /opt/application.properties
-              echo "spring.jpa.properties.hibernate.format_sql=true" >> /opt/application.properties
-              echo "spring.jpa.show-sql=true" >> /opt/application.properties
-              echo "pubsub.projectId=${{ secrets.GCP_PROJECT_ID }}" >> /opt/application.properties
-              echo "pubsub.topicId=verify_email" >> /opt/application.properties
-              EOT
-              chmod 655 /opt/application.properties
-              chown csye6225:csye6225 /opt/application.properties
-              sudo systemctl start webapp
-              sudo systemctl start google-cloud-ops-agent' \
-            --verbosity=debug
+            --metadata startup-script="#!/bin/bash
+              # Create or overwrite the .env file
+              echo 'spring.datasource.driver-class-name=org.postgresql.Driver' > /opt/application.properties
+              echo 'spring.datasource.username=${{ secrets.DB_USER }}' >> /opt/application.properties
+              echo 'spring.datasource.password=${{ secrets.PG_DB_PASSWORD }}' >> /opt/application.properties
+              echo 'spring.jpa.properties.hibernate.show_sql=true' >> /opt/application.properties
+              echo 'spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect' >> /opt/application.properties
+              echo 'spring.jpa.hibernate.ddl-auto=update' >>  /opt/application.properties
+              echo 'spring.devtools.restart.enabled=false' >>  /opt/application.properties
+              echo 'spring.datasource.hikari.connectionTimeout=10000' >> /opt/application.properties
+              echo 'spring.datasource.hikari.maximumPoolSize=10' >> /opt/application.properties
+              echo 'spring.jpa.properties.hibernate.format_sql=true' >> /opt/application.properties
+              echo 'spring.jpa.show-sql=true' >> /opt/application.properties
+              echo 'pubsub.projectId=${{ secrets.GCP_PROJECT_ID }}' >> /opt/application.properties
+              echo 'pubsub.topicId=verify_email' >> /opt/application.properties
+              # Set permissions
+#            --metadata startup-script='#!/bin/bash
+#              cat <<EOT
+#              touch /opt/application.properties
+#              echo "spring.datasource.driver-class-name=org.postgresql.Driver" >> /opt/application.properties
+#              echo "spring.datasource.url=jdbc:postgresql://${{ secrets.PG_HOSTNAME }}:5432/${{ secrets.DB_NAME }}" >> /opt/application.properties
+#              echo "spring.datasource.username=${{ secrets.DB_USER }}" >> /opt/application.properties
+#              echo "spring.datasource.password=${{ secrets.PG_DB_PASSWORD }}" >> /opt/application.properties
+#              echo "spring.jpa.properties.hibernate.show_sql=true" >> /opt/application.properties
+#              echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> /opt/application.properties
+#              echo "spring.jpa.hibernate.ddl-auto=update" >> /opt/application.properties
+#              echo "spring.devtools.restart.enabled=false" >> /opt/application.properties
+#              echo "spring.datasource.hikari.connectionTimeout=10000" >> /opt/application.properties
+#              echo "spring.datasource.hikari.maximumPoolSize=10" >> /opt/application.properties
+#              echo "spring.jpa.properties.hibernate.format_sql=true" >> /opt/application.properties
+#              echo "spring.jpa.show-sql=true" >> /opt/application.properties
+#              echo "pubsub.projectId=${{ secrets.GCP_PROJECT_ID }}" >> /opt/application.properties
+#              echo "pubsub.topicId=verify_email" >> /opt/application.properties
+#              EOT
 
       # - Update the Instance Group with the new Instance Template
       # - name: Update Instance Group
