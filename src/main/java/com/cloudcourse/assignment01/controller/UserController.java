@@ -65,7 +65,7 @@ public class UserController {
             ThreadContext.put("severity", "INFO");
             ThreadContext.put("httpMethod", request.getMethod());
             ThreadContext.put("path", request.getRequestURI());
-            ThreadContext.put("logger", "Logging INFO with user controller post method" + user.getEmail());
+            ThreadContext.put("logger", "Logging INFO demo with user controller post method" + user.getEmail());
             logger.info("Logging INFO with user controller post method");
 
             ThreadContext.put("severity", "WARNING");
