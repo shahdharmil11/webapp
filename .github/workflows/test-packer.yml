@@ -49,6 +49,11 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
       - uses: actions/checkout@v3
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
@@ -147,7 +152,7 @@ jobs:
 
       - name: Wait for instances to be updated and running
         run: |
-          gcloud config set project ${{secrets.GCP_PROJECT_ID}}
+#          gcloud config set project ${{secrets.GCP_PROJECT_ID}}
           gcloud compute instance-groups managed wait-until instance-group-manager \
               --region=${{ secrets.REGION }} \
               --stable
