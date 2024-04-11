@@ -154,7 +154,6 @@ jobs:
 #              echo "pubsub.topicId=verify_email" >> /opt/application.properties
 #              EOT
 
-      # - Update the Instance Group with the new Instance Template
       # - name: Update Instance Group
       - name: Update Instance Group
         run: |
