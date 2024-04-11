@@ -155,7 +155,7 @@ jobs:
 #              echo "pubsub.topicId=verify_email" >> /opt/application.properties
 #              EOT
 
-      # - name: Update Instance Group
+      # - name:  Update Instance Group
       - name: Update Instance Group
         run: |
           gcloud compute instance-groups managed set-instance-template instance-group-manager \
