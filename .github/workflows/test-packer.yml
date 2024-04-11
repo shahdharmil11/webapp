@@ -1,15 +1,12 @@
 name: test-packer
 
 on:
-  pull_request:
-    types: [closed]
-    branches: [ "main" ]
-  workflow_dispatch:
+  push:
+    branches: [ "master" ]
 
 jobs:
   job_id:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
 
     steps:
       - id: 'auth'
@@ -20,7 +17,7 @@ jobs:
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
 
-      - name: 'Use gcloud CLI'
+      - name: 'Use Gcloud CLI'
         run: 'gcloud info'
 
   test:
