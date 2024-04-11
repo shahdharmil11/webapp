@@ -120,6 +120,7 @@ jobs:
             --metadata startup-script="#!/bin/bash
               # Create or overwrite the .env file
               echo 'spring.datasource.driver-class-name=org.postgresql.Driver' > /opt/application.properties
+              echo "spring.datasource.url=jdbc:postgresql://${{ secrets.PG_HOSTNAME }}:5432/${{ secrets.DB_NAME }}" >> /opt/application.properties
               echo 'spring.datasource.username=${{ secrets.DB_USER }}' >> /opt/application.properties
               echo 'spring.datasource.password=${{ secrets.PG_DB_PASSWORD }}' >> /opt/application.properties
               echo 'spring.jpa.properties.hibernate.show_sql=true' >> /opt/application.properties
