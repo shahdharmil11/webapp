@@ -131,8 +131,10 @@ jobs:
               echo 'spring.jpa.properties.hibernate.format_sql=true' >> /opt/application.properties
               echo 'spring.jpa.show-sql=true' >> /opt/application.properties
               echo 'pubsub.projectId=${{ secrets.GCP_PROJECT_ID }}' >> /opt/application.properties
-              echo 'pubsub.topicId=verify_email' >> /opt/application.properties
-              # Set permissions
+              echo 'pubsub.topicId=verify_email' >> /opt/application.properties \
+              --verbosity=debug
+          
+
 #            --metadata startup-script='#!/bin/bash
 #              cat <<EOT
 #              touch /opt/application.properties
