@@ -100,7 +100,6 @@ jobs:
 
 #      - name: Build Packer Image
 #        run: packer build -force packer-info.pkr.hcl
-
 #      - name: 'Authenticate with Google Cloud'
 #        uses: 'google-github-actions/auth@v2'
 #        with:
