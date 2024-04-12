@@ -98,15 +98,13 @@ jobs:
       - name: Validate Packer Image
         run: packer validate packer-info.pkr.hcl
 
-#      - name: Build Packer Image
-#        run: packer build -force packer-info.pkr.hcl
-#      - name: 'Authenticate with Google Cloud'
-#        uses: 'google-github-actions/auth@v2'
-#        with:
-#          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+      - name: Build Packer Image
+        run: packer build -force packer-info.pkr.hcl
 
-#      - name: 'Set up Cloud SDK'
-#        uses: 'google-github-actions/setup-gcloud@v2'
+      - name: 'Authenticate with Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
       - name: Create instance template
         run: |
