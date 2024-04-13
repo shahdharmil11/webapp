@@ -104,6 +104,11 @@ jobs:
       - name: Build Packer Image
         run: packer build -force packer-info.pkr.hcl
 
+      - name: 'Authenticate with Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
       - name: Create instance template
         run: |
           gcloud compute instance-templates create webapp-instance-${{ github.sha }} \
