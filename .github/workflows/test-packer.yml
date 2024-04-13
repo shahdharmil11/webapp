@@ -125,6 +125,7 @@ jobs:
             --no-boot-disk-auto-delete \
             --boot-disk-kms-key=projects/cloud-project-04/locations/us-east1/keyRings/${{ secrets.KEY_RING }}/cryptoKeys/vm-disk-key \
             --metadata startup-script='#!/bin/bash
+              cat <<EOT
               touch /opt/application.properties
               echo "spring.datasource.driver-class-name=org.postgresql.Driver" >> /opt/application.properties
               echo "spring.datasource.url=jdbc:postgresql://${{ secrets.PG_HOSTNAME }}:5432/${{ secrets.DB_NAME }}" >> /opt/application.properties
@@ -196,8 +197,6 @@ jobs:
       #            sudo systemctl start webapp
       #            sudo systemctl start google-cloud-ops-agent' \
       #            --verbosity=debug
-
-
 
       # - Update the Instance Group with the new Instance Template
       # - name: Update Instance Group
