@@ -142,7 +142,9 @@ jobs:
               echo "pubsub.topicId=verify_email" >> /opt/application.properties
               EOT
               chmod 655 /opt/application.properties
-              chown csye6225:csye6225 /opt/application.properties' \
+              chown csye6225:csye6225 /opt/application.properties
+              sudo systemctl start webapp
+              sudo systemctl start google-cloud-ops-agent' \
             --verbosity=debug
 
 
