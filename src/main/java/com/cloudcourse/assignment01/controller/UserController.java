@@ -147,7 +147,7 @@ public class UserController {
             // Handle validation errors
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>("user data is not sufficient, please fill in required fields", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("user data is not sufficient, please fill required fields", HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             e.fillInStackTrace();
             System.out.println("Error has occured" + e.getMessage());
