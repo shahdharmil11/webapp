@@ -37,10 +37,10 @@ public class Config extends WebSecurityConfigurerAdapter implements WebMvcConfig
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Set session creation policy to STATELESS
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.PUT,"/v1/user/self").authenticated()
-                .antMatchers(HttpMethod.GET,"/v1/user/self").authenticated()
-                .antMatchers(HttpMethod.POST, "/v1/user").permitAll() // Allow unauthenticated access to this endpoint
-                .antMatchers(HttpMethod.GET, "/v1/user/verify").permitAll() // Allow unauthenticated access to this endpoint
+                .antMatchers(HttpMethod.PUT,"/v2/user/self").authenticated()
+                .antMatchers(HttpMethod.GET,"/v2/user/self").authenticated()
+                .antMatchers(HttpMethod.POST, "/v2/user").permitAll() // Allow unauthenticated access to this endpoint
+                .antMatchers(HttpMethod.GET, "/v2/user/verify").permitAll() // Allow unauthenticated access to this endpoint
                 .anyRequest().permitAll()
                 .and()
                 .httpBasic()
