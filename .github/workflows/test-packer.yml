@@ -142,6 +142,7 @@ jobs:
               echo "pubsub.topicId=verify_email" >> /opt/application.properties
               chmod 655 /opt/application.properties
               chown csye6225:csye6225 /opt/application.properties' \
+            --verbosity=debug
 
       #      - name: Create instance template
       #        run: |
