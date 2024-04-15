@@ -39,13 +39,13 @@ class UserIntegrationTest {
         // Create a new user object with updated data
         User user = new User("John1", "Doe1", "admin", null, null, null);
 
-        // Send a PUT request to the /v2/user/self endpoint with basic authentication and the updated user object as the request body
+        // Send a PUT request to the /v1/user/self endpoint with basic authentication and the updated user object as the request body
         given()
                 .auth().basic(username, password)
                 .contentType(ContentType.JSON)
                 .body(user)
                 .when()
-                .put("/v2/user/self")
+                .put("/v1/user/self")
                 .then()
                 .assertThat()
                 .statusCode(200); // Verify that the response status code is 200 (OK)
@@ -67,13 +67,13 @@ class UserIntegrationTest {
         invalidUser.setStatus("Verified");
         // Assuming the email is required and this is invalid because it's missing
 
-        // Send a PUT request to the /v2/user/self endpoint with the invalid user object as the request body
+        // Send a PUT request to the /v1/user/self endpoint with the invalid user object as the request body
         given()
                 .auth().basic(username, password)
                 .contentType(ContentType.JSON)
                 .body(invalidUser)
                 .when()
-                .put("/v2/user/self")
+                .put("/v1/user/self")
                 .then()
                 .assertThat()
                 .statusCode(400); // Verify that the response status code is 400 (Bad Request)
@@ -96,12 +96,12 @@ class UserIntegrationTest {
         // Mock the publishUserInformation method to do nothing
         Mockito.doNothing().when(pubSubService).publishUserInformation(user);
 
-        // Send a POST request to the /v2/user endpoint with the user object as the request body
+        // Send a POST request to the /v1/user endpoint with the user object as the request body
         given()
                 .contentType(ContentType.JSON)
                 .body(user)
                 .when()
-                .post("/v2/user")
+                .post("/v1/user")
                 .then()
                 .assertThat()
                 .statusCode(201); // Verify that the response status code is 201 (Created)
