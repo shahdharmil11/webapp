@@ -8,7 +8,6 @@ on:
 jobs:
   job_id:
     runs-on: ubuntu-latest
-
     steps:
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
@@ -125,7 +124,6 @@ jobs:
             --no-boot-disk-auto-delete \
             --boot-disk-kms-key=projects/cloud-project-04/locations/us-east1/keyRings/${{ secrets.KEY_RING }}/cryptoKeys/vm-disk-key \
             --metadata startup-script='#!/bin/bash
-              cat <<EOT
               touch /opt/application.properties
               echo "spring.datasource.driver-class-name=org.postgresql.Driver" >> /opt/application.properties
               echo "spring.datasource.url=jdbc:postgresql://${{ secrets.PG_HOSTNAME }}:5432/${{ secrets.DB_NAME }}" >> /opt/application.properties
@@ -141,11 +139,8 @@ jobs:
               echo "spring.jpa.show-sql=true" >> /opt/application.properties
               echo "pubsub.projectId=${{ secrets.GCP_PROJECT_ID }}" >> /opt/application.properties
               echo "pubsub.topicId=verify_email" >> /opt/application.properties
-              EOT
               chmod 655 /opt/application.properties
-              chown csye6225:csye6225 /opt/application.properties
-              sudo systemctl start webapp
-              sudo systemctl start google-cloud-ops-agent' \
+              chown csye6225:csye6225 /opt/application.properties' \
             --verbosity=debug
 
 
@@ -216,7 +211,6 @@ jobs:
 
       - name: Wait for instances to be updated and running
         run: |
-          gcloud config set project ${{secrets.GCP_PROJECT_ID}}
           gcloud compute instance-groups managed wait-until instance-group-manager \
               --region=${{ secrets.REGION }} \
               --stable
