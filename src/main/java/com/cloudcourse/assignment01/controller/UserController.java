@@ -58,7 +58,7 @@ public class UserController {
 
     private static final Logger logger = LogManager.getLogger(UserController.class);
 
-    @PostMapping("/v1/user")
+    @PostMapping("/v2/user")
     public ResponseEntity<Object> createUser(@RequestBody User user, HttpServletRequest request) {
         try {
 
@@ -114,7 +114,7 @@ public class UserController {
         }
     }
 
-    @PutMapping(value = "/v1/user/self")
+    @PutMapping(value = "/v2/user/self")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> updateUser(@RequestParam(required = false) Map<String, String> params,
                                              @RequestBody User updatedUser) {
@@ -157,7 +157,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(value = "/v1/user/verify")
+    @GetMapping(value = "/v2/user/verify")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> verifyUser(@RequestParam("email") String email, @RequestParam("id") String id) {
 
@@ -183,7 +183,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(value = "/v1/user/self")
+    @GetMapping(value = "/v2/user/self")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Object> getUserInfo(@RequestParam(required = false) Map<String, String> params, @RequestBody(required = false) User user1) {
         try {
@@ -215,14 +215,14 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/v1/user", method = {RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.TRACE, RequestMethod.OPTIONS})
+    @RequestMapping(value = "/v2/user", method = {RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.TRACE, RequestMethod.OPTIONS})
     public ResponseEntity<Object> handleMethodNotAllowed() {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
                 .header("Cache-Control", "no-cache")
                 .build();
     }
 
-    @RequestMapping(value = "/v1/user/self", method = {RequestMethod.POST, RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.TRACE, RequestMethod.OPTIONS})
+    @RequestMapping(value = "/v2/user/self", method = {RequestMethod.POST, RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.TRACE, RequestMethod.OPTIONS})
     public ResponseEntity<Object> handleMethodsNotAllowed() {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
                 .header("Cache-Control", "no-cache")
