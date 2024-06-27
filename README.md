@@ -177,7 +177,7 @@ Responses:
 
 -- Configures md5 authentication in pg_hba.conf  
 
--- Makes maven point to JDK 17 instead of the default mapping to JDK 11  
+-- Makes maven point to JDK 17 instead of the default mapping to JDK 1.8 
 
 -- Builds and runs the Spring Boot application  
 
