@@ -23,6 +23,22 @@ Open terminal:
 
 <img src="https://github.com/shahdharmil11/webapp/blob/master/gcp-infra.jpeg"  title="Infra provisioned">
 
+## Repositories  
+
+- [**WebApp**](https://github.com/shahdharmil11/webapp): Spring Boot-based RESTful service for user management with PostgreSQL.
+
+- [**Terraform Infrastructure (tf-gcp-infra)**](https://github.com/shahdharmil11/terraform-infra-gcp): Terraform code to provision and manage the GCP infrastructure.
+
+[//]: # (## Getting Started)
+
+[//]: # (To utilize this suite, follow the setup instructions in the README of each repository.)
+
+## Use Cases
+- Automated cloud deployments
+- Accelerated autoscaling and consistent infra with Packer golden images  
+- Event-driven serverless workflows
+- Infrastructure as code for GCP
+
 
 ### Assignment 1
 - Start Spring Boot application  
