@@ -21,6 +21,8 @@ Open terminal:
   6. Run Test cases and create few instances
   7. Make sure CI/CD is working as expected
 
+<img src="https://github.com/shahdharmil11/webapp/blob/master/gcp-infra.jpeg"  title="Infra provisioned">
+
 
 ### Assignment 1
 - Start Spring Boot application  
