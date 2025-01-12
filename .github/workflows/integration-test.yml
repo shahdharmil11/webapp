@@ -24,16 +24,16 @@ jobs:
           sudo systemctl start postgresql
           sudo systemctl enable postgresql
           sudo systemctl status postgresql
-          sudo su - postgres -c "psql -c \"CREATE DATABASE ${{ secrets.POSTGRES_DATABASENAME }};\""
-          sudo su - postgres -c "psql -c \"ALTER USER ${{secrets.POSTGRES_USERNAME}} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';\""
-          sudo su - postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.POSTGRES_DATABASENAME }} TO ${{ secrets.POSTGRES_USERNAME }};\""
+          sudo su - postgres -c "psql -c \"CREATE DATABASE ${{ secrets.DB_NAME }};\""
+          sudo su - postgres -c "psql -c \"ALTER USER ${{secrets.DB_USER}} WITH PASSWORD '${{ secrets.PG_DB_PASSWORD }}';\""
+          sudo su - postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_NAME }} TO ${{ secrets.DB_USER }};\""
 
       - name: Wait for Application Startup
         run: sleep 10s
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/cloud
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.POSTGRES_USERNAME }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USER }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.PG_DB_PASSWORD }}
 
       - name: Run integration tests
         run: mvn clean verify
