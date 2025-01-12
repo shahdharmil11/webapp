@@ -21,7 +21,7 @@ variable "zone" {
 
 source "googlecompute" "my-image" {
   project_id        = "final-project-419823"
-  source_image      = "centos-stream-8-v20240110"
+  source_image      = "centos-stream-9-v20241210"
   ssh_username      = "packer"
   image_name        = "image-with-changed-logs-03"
   image_description = "Custom image with Java, Maven, PostgreSQL, and web application"
