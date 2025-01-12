@@ -58,11 +58,13 @@ jobs:
         run: "packer fmt -check packer-info.pkr.hcl"
 
       - name: Get credentials
-        run: if [[ -n "$GCLOUD_CREDENTIALS" ]]; then
-              echo "Setting up Google Cloud credentials..."
-              echo "$GCLOUD_CREDENTIALS" > /tmp/gcloud_credentials.json
-              export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcloud_credentials.json
-              fi
+        run: |
+          if [[ -n "$GCLOUD_CREDENTIALS" ]]; then
+            echo "Setting up Google Cloud credentials..."
+            echo "$GCLOUD_CREDENTIALS" > /tmp/gcloud_credentials.json
+            export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcloud_credentials.json
+          fi
+
 
       - name: Validate Packer Image
         run: packer validate -var 'project_id=final-project-419823' -var 'image_family=custom-centos-8-image-webapp' -var 'image_name=abcd' -var 'zone=us-central1-a' packer-info.pkr.hcl
