@@ -19,22 +19,6 @@ variable "zone" {
   default   = "us-east1-c"
 }
 
-variable "image_family" {
-  type    = string
-  default = "centos-stream-8"
-}
-
-
-variable "image_name" {
-  type    = string
-  default = "centos-stream-8-custom-image"
-}
-
-variable "ssh_username" {
-  type    = string
-  default = "centos"
-}
-
 source "googlecompute" "my-image" {
   project_id        = "final-project-419823"
   source_image      = "centos-stream-8-v20240110"
