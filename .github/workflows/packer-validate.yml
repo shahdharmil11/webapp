@@ -65,6 +65,5 @@ jobs:
             export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcloud_credentials.json
           fi
 
-
       - name: Validate Packer Image
-        run: packer validate -var 'project_id=final-project-419823' -var 'image_name=abcd' -var 'zone=us-central1-a' packer-info.pkr.hcl
+        run: packer validate packer-info.pkr.hcl
