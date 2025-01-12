@@ -22,6 +22,7 @@ source env_vars.sh
 
 # Install unzip
 sudo dnf install -y unzip
+sudo yum install -y unzip
 
 # Clean up
 sudo yum clean all
