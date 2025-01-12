@@ -10,13 +10,13 @@ packer {
 variable "project_id" {
   type      = string
   sensitive = true
-  default = "final-project-419823"
+  default   = "final-project-419823"
 }
 
 variable "zone" {
   type      = string
   sensitive = true
-  default = "us-east1-c"
+  default   = "us-east1-c"
 }
 
 variable "image_family" {
