@@ -8,9 +8,8 @@ packer {
 }
 
 source "googlecompute" "my-image" {
-  project_id        = "cloud-project-04"
+  project_id        = "final-project-419823"
   source_image      = "centos-stream-8-v20240110"
-  credentials_file  = "cloud-project-04-592b0a6c5422.json"
   ssh_username      = "packer"
   image_name        = "image-with-changed-logs-03"
   image_description = "Custom image with Java, Maven, PostgreSQL, and web application"

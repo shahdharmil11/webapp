@@ -58,4 +58,6 @@ jobs:
         run: "packer fmt -check packer-info.pkr.hcl"
 
       - name: Validate Packer Image
-        run: packer validate packer-info.pkr.hcl
+        run: packer validate \
+              -var "project_id=${{ secrets.GCP_PROJECT_ID }}" \
+              packer-info.pkr.hcl
