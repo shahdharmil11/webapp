@@ -33,10 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import com.google.gson.JsonObject;
 
@@ -130,9 +127,9 @@ public class UserController {
             String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
             User existingUser = userService.getUserByEmail(userEmail);
 
-            if (existingUser.getStatus()=="Created") {
+            if (Objects.equals(existingUser.getStatus(), "Created")) {
                 return new ResponseEntity<>("User email is not verified", HttpStatus.BAD_REQUEST);
-            } else if (existingUser.getStatus()=="Expired") {
+            } else if (Objects.equals(existingUser.getStatus(), "Expired")) {
                 return new ResponseEntity<>("User email is expired", HttpStatus.BAD_REQUEST);
             }
 

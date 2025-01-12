@@ -7,10 +7,37 @@ packer {
   }
 }
 
+variable "project_id" {
+  type      = string
+  sensitive = true
+  default   = "final-project-419823"
+}
+
+variable "zone" {
+  type      = string
+  sensitive = true
+  default   = "us-east1-c"
+}
+
+variable "image_family" {
+  type    = string
+  default = "centos-stream-8"
+}
+
+
+variable "image_name" {
+  type    = string
+  default = "centos-stream-8-custom-image"
+}
+
+variable "ssh_username" {
+  type    = string
+  default = "centos"
+}
+
 source "googlecompute" "my-image" {
-  project_id        = "cloud-project-04"
+  project_id        = "final-project-419823"
   source_image      = "centos-stream-8-v20240110"
-  credentials_file  = "cloud-project-04-592b0a6c5422.json"
   ssh_username      = "packer"
   image_name        = "image-with-changed-logs-03"
   image_description = "Custom image with Java, Maven, PostgreSQL, and web application"

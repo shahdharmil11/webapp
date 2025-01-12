@@ -57,5 +57,13 @@ jobs:
         id: fmt
         run: "packer fmt -check packer-info.pkr.hcl"
 
+      - name: Get credentials
+        run: |
+          if [[ -n "$GCLOUD_CREDENTIALS" ]]; then
+            echo "Setting up Google Cloud credentials..."
+            echo "$GCLOUD_CREDENTIALS" > /tmp/gcloud_credentials.json
+            export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcloud_credentials.json
+          fi
+
       - name: Validate Packer Image
         run: packer validate packer-info.pkr.hcl
