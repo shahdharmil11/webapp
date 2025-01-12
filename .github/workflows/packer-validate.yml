@@ -67,4 +67,4 @@ jobs:
 
 
       - name: Validate Packer Image
-        run: packer validate -var 'project_id=final-project-419823' -var 'image_family=custom-centos-8-image-webapp' -var 'image_name=abcd' -var 'zone=us-central1-a' packer-info.pkr.hcl
+        run: packer validate -var 'project_id=final-project-419823' -var 'image_name=abcd' -var 'zone=us-central1-a' packer-info.pkr.hcl
