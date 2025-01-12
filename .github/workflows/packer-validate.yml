@@ -59,5 +59,13 @@ jobs:
 
       - name: Validate Packer Image
         run: packer validate \
-              -var "project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -var "project_id=${PROJECT_ID}" \
+            -var "ssh_username=packer" \
+            -var "vm_size=e2-small" \
+            -var "image_family=custom-centos-8-image-webapp" \
+            -var "source_image_family=centos-stream-8" \
+            -var "zone=us-central1-a" \
+            -var "vpc_network=default" \
+            -var "database_user=${DATABASE_USER}" \
+            -var "database_password=${DATABASE_PASSWORD}" \
               packer-info.pkr.hcl
