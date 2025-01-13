@@ -3,23 +3,34 @@
 exec > >(tee -a "$LOG_FILE") 2> >(tee -a "$ERROR_LOG_FILE" >&2)
 
 # Update and install necessary packages
-sudo yum install -y java-17-openjdk-devel
+sudo dnf upgrade -y
+sudo dnf install -y java-17-openjdk-devel
 java -version
 sudo yum install -y maven
 mvn -version
 
-sudo update-alternatives --set java $JAVA_HOME/bin/java
-sudo update-alternatives --set javac $JAVA_HOME/bin/javac
+# Set Java 17 as the default version
+sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-17.0.6.0.9-0.3.ea.el8.x86_64/bin/java
 
-sudo ln -sf /usr/lib/jvm/java-17-openjdk-17.0.6.0.9-0.3.ea.el8.x86_64/bin/java  /etc/alternatives/java
+# Set JAVA_HOME for all users
+echo 'export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-17.0.6.0.9-0.3.ea.el8.x86_64' | sudo tee /etc/profile.d/jdk17.sh
 
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
-export PATH=$JAVA_HOME/bin:$PATH
+# Add JAVA_HOME to PATH
+echo 'export PATH=$JAVA_HOME/bin:$PATH' | sudo tee -a /etc/profile.d/jdk17.sh
 
+#sudo ln -sf /usr/lib/jvm/java-17-openjdk-17.0.6.0.9-0.3.ea.el8.x86_64/bin/java  /etc/alternatives/java
+
+#export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+#export PATH=$JAVA_HOME/bin:$PATH
+
+# shellcheck disable=SC1090
 source ~/.bashrc
 
+# shellcheck disable=SC1090
+. ~/.bashrc
+
 # Set environment variables
-source env_vars.sh
+#source env_vars.sh
 
 # Install unzip
 sudo dnf install -y unzip
