@@ -4,7 +4,6 @@ exec > >(tee -a "$LOG_FILE") 2> >(tee -a "$ERROR_LOG_FILE" >&2)
 
 # Update and install necessary packages
 sudo yum install -y java-17-openjdk-devel
-sudo yum -y update
 java -version
 sudo yum install -y maven
 mvn -version
@@ -17,14 +16,13 @@ sudo ln -sf /usr/lib/jvm/java-17-openjdk-17.0.6.0.9-0.3.ea.el8.x86_64/bin/java  
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
 export PATH=$JAVA_HOME/bin:$PATH
 
+source ~/.bashrc
+
 # Set environment variables
 source env_vars.sh
 
 # Install unzip
 sudo dnf install -y unzip
-sudo yum install -y unzip
-
-source ~/.bashrc
 
 which unzip
 
